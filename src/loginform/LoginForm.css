@@ -1,0 +1,35 @@
+
+.login-form-container {
+    width: 300px;
+    margin: 80px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-form h2 {
+    margin: 0 0 20px 0;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #14452F;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1D2E28;
+}
+
+.MuiFormHelperText-root {
+    color: red;
+}

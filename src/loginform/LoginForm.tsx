@@ -1,22 +1,43 @@
 import React, { useCallback, useMemo } from 'react';
-import { Button, TextField } from '@mui/material';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { Button, TextField, CircularProgress } from '@mui/material';
+import { Formik, Form, FormikHelpers } from 'formik';
 import * as yup from 'yup';
+import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
 
+interface LoginFormValues {
+  username: string;
+  password: string;
+}
+
 const LoginForm: React.FC = () => {
-  const onSubmit = useCallback((values: any) => {
-    console.log(values);
-    // Handle form submission
-  }, []);
+  const navigate = useNavigate();
+
+  const onSubmit = useCallback(
+    async (
+      values: LoginFormValues,
+      { setSubmitting, setErrors }: FormikHelpers<LoginFormValues>,
+    ) => {
+      console.log(values);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      if (values.username === 'admin' && values.password === 'password') {
+        navigate('/home');
+      } else {
+        setErrors({ username: 'Invalid username or password' });
+      }
+      setSubmitting(false);
+    },
+    [navigate],
+  );
 
   const validationSchema = useMemo(
     () =>
-      yup.object().shape({
-        username: yup.string().required('Required'),
+      yup.object({
+        username: yup.string().required('Username is required'),
         password: yup
           .string()
-          .required('Required')
+          .required('Password is required')
           .min(5, 'Password too short'),
       }),
     [],
@@ -28,8 +49,6 @@ const LoginForm: React.FC = () => {
         initialValues={{ username: '', password: '' }}
         onSubmit={onSubmit}
         validationSchema={validationSchema}
-        validateOnChange
-        validateOnBlur
       >
         {({
           handleChange,
@@ -40,6 +59,7 @@ const LoginForm: React.FC = () => {
           touched,
           isValid,
           dirty,
+          isSubmitting,
         }) => (
           <Form
             className="login-form"
@@ -79,15 +99,20 @@ const LoginForm: React.FC = () => {
                 helperText={touched.password && errors.password}
               />
             </div>
+            {errors.username && (
+              <div style={{ color: 'red', marginTop: 10 }}>
+                {errors.username}
+              </div>
+            )}
             <Button
               variant="contained"
               type="submit"
               fullWidth
-              disabled={!(isValid && dirty)}
+              disabled={!(isValid && dirty) || isSubmitting}
               className="login-button"
               style={{ backgroundColor: '#14452F', color: 'white' }}
             >
-              Login
+              {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
             </Button>
           </Form>
         )}

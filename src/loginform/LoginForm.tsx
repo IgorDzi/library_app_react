@@ -1,34 +1,32 @@
+// LoginForm.tsx
 import React, { useCallback, useMemo } from 'react';
 import { Button, TextField, CircularProgress } from '@mui/material';
 import { Formik, Form, FormikHelpers } from 'formik';
 import * as yup from 'yup';
-import { useNavigate } from 'react-router-dom';
 import './LoginForm.css';
-
-interface LoginFormValues {
-  username: string;
-  password: string;
-}
+import { useApi } from '../ApiProvider';
+import { useAuth } from '../AuthContext';
 
 const LoginForm: React.FC = () => {
-  const navigate = useNavigate();
+  const { login } = useAuth();
+  const apiClient = useApi();
 
   const onSubmit = useCallback(
-    async (
-      values: LoginFormValues,
-      { setSubmitting, setErrors }: FormikHelpers<LoginFormValues>,
-    ) => {
-      console.log(values);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      if (values.username === 'admin' && values.password === 'password') {
-        navigate('/home');
-      } else {
-        setErrors({ username: 'Invalid username or password' });
+    async (values: { username: string; password: string }, formik: FormikHelpers<{ username: string; password: string }>) => {
+      try {
+        const response = await apiClient.login(values);
+        if (response.success) {
+          login();
+        } else {
+          formik.setErrors({ username: 'Invalid username or password' });
+        }
+      } catch (error) {
+        formik.setErrors({ username: 'An error occurred. Please try again.' });
+      } finally {
+        formik.setSubmitting(false);
       }
-      setSubmitting(false);
     },
-    [navigate],
+    [apiClient, login],
   );
 
   const validationSchema = useMemo(
@@ -51,16 +49,16 @@ const LoginForm: React.FC = () => {
         validationSchema={validationSchema}
       >
         {({
-          handleChange,
-          handleBlur,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          isValid,
-          dirty,
-          isSubmitting,
-        }) => (
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            isValid,
+            dirty,
+            isSubmitting,
+          }) => (
           <Form
             className="login-form"
             id="signForm"
@@ -99,11 +97,6 @@ const LoginForm: React.FC = () => {
                 helperText={touched.password && errors.password}
               />
             </div>
-            {errors.username && (
-              <div style={{ color: 'red', marginTop: 10 }}>
-                {errors.username}
-              </div>
-            )}
             <Button
               variant="contained"
               type="submit"

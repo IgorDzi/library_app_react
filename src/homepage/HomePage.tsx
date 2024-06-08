@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Typography, Grid, Paper } from '@mui/material';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'; // Icon for books
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet'; // Icon for loans
+import { Button, Container, Typography, Grid } from '@mui/material';
+import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import PeopleIcon from '@mui/icons-material/People';
+import { useApi } from '../ApiProvider';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const apiClient = useApi();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      const response = await apiClient.getUserRole();
+      if (response.success) {
+        setRole(response.data);
+      } else {
+        console.error('Failed to fetch user role');
+      }
+    };
+    fetchUserRole();
+  }, [apiClient]);
 
   const handleNavigateBooks = () => {
     navigate('/books');
@@ -15,15 +31,13 @@ const HomePage: React.FC = () => {
     navigate('/loans');
   };
 
+  const handleNavigateUsers = () => {
+    navigate('/users');
+  };
+
   return (
     <Container maxWidth="sm">
-      <Typography
-        variant="h4"
-        gutterBottom
-        component="div"
-        align="center"
-        style={{ margin: '20px 0' }}
-      >
+      <Typography variant="h4" gutterBottom component="div" align="center" style={{ margin: '20px 0' }}>
         Welcome to the Library
       </Typography>
       <Grid container spacing={2} justifyContent="center">
@@ -57,6 +71,23 @@ const HomePage: React.FC = () => {
             View Loans
           </Button>
         </Grid>
+        {role === 'ROLE_ADMIN' && (
+          <Grid item>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleNavigateUsers}
+              startIcon={<PeopleIcon />}
+              style={{
+                backgroundColor: '#333',
+                color: 'white',
+                padding: '10px 20px',
+              }}
+            >
+              Manage Users
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </Container>
   );

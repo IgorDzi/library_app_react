@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Typography, Button, CircularProgress } from '@mui/material';
-import LoanItem from './LoanItem';
+import UserItem from './UserItem';
 import { useApi } from '../ApiProvider';
-import { GetLoanDto } from '../api/dto/loans.dto';
-import BeginLoanDialog from './BeginLoanDialog';
+import { GetUserDto } from '../api/dto/user.dto';
+import AddUserDialog from './AddUserDialog';
 
-const LoanList: React.FC = () => {
-  const [loans, setLoans] = useState<GetLoanDto[]>([]);
+const UserManagementPage: React.FC = () => {
+  const [users, setUsers] = useState<GetUserDto[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [role, setRole] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const apiClient = useApi();
 
-  const fetchLoans = async () => {
+  const fetchUsers = async () => {
     try {
-      const response = await apiClient.getLoans();
+      const response = await apiClient.getUsers();
       if (response.success) {
-        setLoans(response.data || []);
+        setUsers(response.data || []);
       } else {
-        console.error('Failed to fetch loans');
+        console.error('Failed to fetch users');
       }
     } catch (error) {
-      console.error('Error fetching loans:', error);
+      console.error('Error fetching users:', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchLoans();
+    fetchUsers();
   }, []);
 
   useEffect(() => {
@@ -47,19 +47,19 @@ const LoanList: React.FC = () => {
     fetchRole();
   }, [apiClient]);
 
-  const handleAddLoanClick = () => {
+  const handleAddUserClick = () => {
     setOpen(true);
   };
 
   const handleClose = (refresh: boolean) => {
     setOpen(false);
     if (refresh) {
-      fetchLoans();
+      fetchUsers();
     }
   };
 
-  const handleLoanEnded = () => {
-    fetchLoans();
+  const handleUserUpdated = () => {
+    fetchUsers();
   };
 
   if (loading) {
@@ -69,28 +69,28 @@ const LoanList: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" component="h2" sx={{ marginBottom: 4 }}>
-        Loan List
+        Users
       </Typography>
       {role === 'ROLE_ADMIN' && (
         <Button
           variant="contained"
           color="primary"
-          onClick={handleAddLoanClick}
+          onClick={handleAddUserClick}
           sx={{ marginBottom: 4 }}
         >
-          Add Loan
+          Add User
         </Button>
       )}
-      {loans.length > 0 ? (
-        loans.map((loan) => (
-          <LoanItem key={loan.id} loan={loan} role={role} onLoanEnded={handleLoanEnded} />
+      {users.length > 0 ? (
+        users.map((user) => (
+          <UserItem key={user.id} user={user} role={role} onUserUpdated={handleUserUpdated} />
         ))
       ) : (
-        <Typography>No loans available</Typography>
+        <Typography>No users available</Typography>
       )}
-      <BeginLoanDialog open={open} onClose={handleClose} />
+      <AddUserDialog open={open} onClose={handleClose} />
     </Container>
   );
 };
 
-export default LoanList;
+export default UserManagementPage;

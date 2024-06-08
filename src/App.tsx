@@ -6,26 +6,35 @@ import About from './aboutpage/About';
 import Contact from './contactpage/Contact';
 import Navbar from './navbar/Navbar';
 import BookList from './booklist/BookList';
-import HomePage from './homepage/HomePage'; // Import the HomePage component
-import { mockBooks } from './booklist/mockBooks';
-import './App.css';
+import HomePage from './homepage/HomePage';
 import LoanList from './loanlist/LoanList';
-import { mockLoans } from './loanlist/mockLoans';
+import ApiProvider from './ApiProvider';
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoute';
+import './App.css';
+import UserManagementPage from './userpage/UserManagmentPage';
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="app-container">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<LoginForm />} />
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/books" element={<BookList books={mockBooks} />} />
-          <Route path="/loans" element={<LoanList loans={mockLoans} />} />
-        </Routes>
-      </div>
+      <AuthProvider>
+        <ApiProvider>
+          <div className="app-container">
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<LoginForm />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route element={<ProtectedRoute />}>
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/books" element={<BookList />} />
+                <Route path="/loans" element={<LoanList  />} />
+                <Route path="/users" element={<UserManagementPage />} />
+              </Route>
+            </Routes>
+          </div>
+        </ApiProvider>
+      </AuthProvider>
     </Router>
   );
 };

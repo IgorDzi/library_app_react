@@ -1,13 +1,15 @@
-// BookItem.tsx
+
 import React from 'react';
 import { Card, CardContent, Typography, Chip } from '@mui/material';
-import { GetBookDto } from './GetBookDto';
+import { GetBookDto } from '../api/dto/books.dto';
+
 
 interface BookItemProps {
   book: GetBookDto;
 }
 
 const BookItem: React.FC<BookItemProps> = ({ book }) => {
+
   return (
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
@@ -25,8 +27,8 @@ const BookItem: React.FC<BookItemProps> = ({ book }) => {
           <strong>ISBN:</strong> {book.isbn}
         </Typography>
         <Chip
-          label={book.isAvailable ? 'Available' : 'Not Available'}
-          color={book.isAvailable ? 'success' : 'error'}
+          label={book.available ? 'Available' : 'Not Available'}
+          color={book.available ? 'success' : 'error'}
           sx={{ marginTop: 1 }}
         />
       </CardContent>
@@ -34,4 +36,8 @@ const BookItem: React.FC<BookItemProps> = ({ book }) => {
   );
 };
 
+
 export default BookItem;
+
+
+

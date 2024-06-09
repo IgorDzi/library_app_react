@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { useApi } from '../ApiProvider';
 import { RegisterDto } from '../api/dto/user.dto';
+import { useTranslation } from 'react-i18next';
 
 interface AddUserDialogProps {
   open: boolean;
@@ -15,6 +16,7 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
   const [fullName, setFullName] = useState<string>('');
   const [role, setRole] = useState<string>('ROLE_READER');
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const handleAddUser = async () => {
     try {
@@ -23,26 +25,26 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
       if (response.success) {
         onClose(true);
       } else {
-        alert('Failed to add user');
+        alert(t('addUser.addFailed'));
       }
     } catch (error) {
-      console.error('Error adding user:', error);
+      console.error(t('addUser.errorAddingUser'), error);
     }
   };
 
   return (
     <Dialog open={open} onClose={() => onClose(false)}>
-      <DialogTitle>Add User</DialogTitle>
+      <DialogTitle>{t('addUser.title')}</DialogTitle>
       <DialogContent>
         <TextField
-          label="Username"
+          label={t('addUser.username')}
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Password"
+          label={t('addUser.password')}
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
@@ -50,36 +52,36 @@ const AddUserDialog: React.FC<AddUserDialogProps> = ({ open, onClose }) => {
           margin="normal"
         />
         <TextField
-          label="Email"
+          label={t('addUser.email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           margin="normal"
         />
         <TextField
-          label="Full Name"
+          label={t('addUser.fullName')}
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
           fullWidth
           margin="normal"
         />
         <FormControl fullWidth margin="normal">
-          <InputLabel>Role</InputLabel>
+          <InputLabel>{t('addUser.role')}</InputLabel>
           <Select
             value={role}
             onChange={(e) => setRole(e.target.value as string)}
           >
-            <MenuItem value="ROLE_READER">ROLE_READER</MenuItem>
-            <MenuItem value="ROLE_ADMIN">ROLE_ADMIN</MenuItem>
+            <MenuItem value="ROLE_READER">{t('addUser.roleReader')}</MenuItem>
+            <MenuItem value="ROLE_ADMIN">{t('addUser.roleAdmin')}</MenuItem>
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => onClose(false)} color="primary">
-          Cancel
+          {t('addUser.cancel')}
         </Button>
         <Button onClick={handleAddUser} color="primary">
-          Add User
+          {t('addUser.addUser')}
         </Button>
       </DialogActions>
     </Dialog>

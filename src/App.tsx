@@ -1,4 +1,4 @@
-// App.tsx
+
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginForm from './loginform/LoginForm';
@@ -10,13 +10,16 @@ import HomePage from './homepage/HomePage';
 import LoanList from './loanlist/LoanList';
 import ApiProvider from './ApiProvider';
 import { AuthProvider } from './AuthContext';
+import {I18nextProvider} from 'react-i18next'
 import ProtectedRoute from './ProtectedRoute';
 import './App.css';
 import UserManagementPage from './userpage/UserManagmentPage';
+import i18n from './i18n';
 
 const App: React.FC = () => {
   return (
     <Router>
+      <I18nextProvider i18n={i18n}>
       <AuthProvider>
         <ApiProvider>
           <div className="app-container">
@@ -35,6 +38,7 @@ const App: React.FC = () => {
           </div>
         </ApiProvider>
       </AuthProvider>
+      </I18nextProvider>
     </Router>
   );
 };

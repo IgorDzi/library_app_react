@@ -1,4 +1,4 @@
-import { GetBookDto } from './books.dto';
+
 
 export interface GetLoanDto {
   id: number;

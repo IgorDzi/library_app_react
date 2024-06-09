@@ -1,4 +1,3 @@
-// LoginForm.tsx
 import React, { useCallback, useMemo } from 'react';
 import { Button, TextField, CircularProgress } from '@mui/material';
 import { Formik, Form, FormikHelpers } from 'formik';
@@ -6,10 +5,12 @@ import * as yup from 'yup';
 import './LoginForm.css';
 import { useApi } from '../ApiProvider';
 import { useAuth } from '../AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const LoginForm: React.FC = () => {
   const { login } = useAuth();
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const onSubmit = useCallback(
     async (values: { username: string; password: string }, formik: FormikHelpers<{ username: string; password: string }>) => {
@@ -18,27 +19,27 @@ const LoginForm: React.FC = () => {
         if (response.success) {
           login();
         } else {
-          formik.setErrors({ username: 'Invalid username or password' });
+          formik.setErrors({ username: t('login.invalidCredentials') });
         }
       } catch (error) {
-        formik.setErrors({ username: 'An error occurred. Please try again.' });
+        formik.setErrors({ username: t('login.errorOccurred') });
       } finally {
         formik.setSubmitting(false);
       }
     },
-    [apiClient, login],
+    [apiClient, login, t],
   );
 
   const validationSchema = useMemo(
     () =>
       yup.object({
-        username: yup.string().required('Username is required'),
+        username: yup.string().required(t('login.usernameRequired')),
         password: yup
           .string()
-          .required('Password is required')
-          .min(5, 'Password too short'),
+          .required(t('login.passwordRequired'))
+          .min(5, t('login.passwordTooShort')),
       }),
-    [],
+    [t],
   );
 
   return (
@@ -65,11 +66,11 @@ const LoginForm: React.FC = () => {
             onSubmit={handleSubmit}
             noValidate
           >
-            <h2>Login</h2>
+            <h2>{t('login.title')}</h2>
             <div className="form-group">
               <TextField
                 id="username"
-                label="Username"
+                label={t('login.username')}
                 variant="outlined"
                 name="username"
                 fullWidth
@@ -84,7 +85,7 @@ const LoginForm: React.FC = () => {
             <div className="form-group">
               <TextField
                 id="password"
-                label="Password"
+                label={t('login.password')}
                 variant="outlined"
                 type="password"
                 name="password"
@@ -105,7 +106,7 @@ const LoginForm: React.FC = () => {
               className="login-button"
               style={{ backgroundColor: '#14452F', color: 'white' }}
             >
-              {isSubmitting ? <CircularProgress size={24} /> : 'Login'}
+              {isSubmitting ? <CircularProgress size={24} /> : t('login.submit')}
             </Button>
           </Form>
         )}

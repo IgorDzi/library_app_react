@@ -5,22 +5,24 @@ import * as yup from 'yup';
 import { useApi } from '../ApiProvider';
 import { GetBookDto } from '../api/dto/books.dto';
 import { GetUserDto } from '../api/dto/user.dto';
+import { useTranslation } from 'react-i18next';
 
 interface BeginLoanDialogProps {
   open: boolean;
   onClose: (refresh: boolean) => void;
 }
 
-const validationSchema = yup.object({
-  book: yup.number().required('Book is required'),
-  user: yup.number().required('User is required'),
-  days: yup.number().required('Number of days is required').min(1),
-});
-
 const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
   const apiClient = useApi();
+  const { t } = useTranslation();
   const [books, setBooks] = useState<GetBookDto[]>([]);
   const [users, setUsers] = useState<GetUserDto[]>([]);
+
+  const validationSchema = yup.object({
+    book: yup.number().required(t('beginLoan.bookRequired')),
+    user: yup.number().required(t('beginLoan.userRequired')),
+    days: yup.number().required(t('beginLoan.daysRequired')).min(1, t('beginLoan.daysMin')),
+  });
 
   useEffect(() => {
     const fetchBooksAndUsers = async () => {
@@ -32,36 +34,34 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
         if (bookResponse.success) {
           setBooks(bookResponse.data || []);
         } else {
-          console.error('Failed to fetch books');
+          console.error(t('beginLoan.fetchBooksFailed'));
         }
         if (userResponse.success) {
           setUsers(userResponse.data || []);
         } else {
-          console.error('Failed to fetch users');
+          console.error(t('beginLoan.fetchUsersFailed'));
         }
       } catch (error) {
-        console.error('Error fetching books or users:', error);
+        console.error(t('beginLoan.fetchError'), error);
       }
     };
     if (open) {
       fetchBooksAndUsers();
     }
-  }, [open, apiClient]);
+  }, [open, apiClient, t]);
 
   const handleSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
     try {
-      console.log('Submitting loan:', values);
       const response = await apiClient.beginLoan(values);
-      console.log('API Response:', response);
       if (response.success) {
         resetForm();
         onClose(true);
       } else {
-        alert('Failed to begin loan');
+        alert(t('beginLoan.beginFailed'));
         onClose(false);
       }
     } catch (error) {
-      console.error('Error beginning loan:', error);
+      console.error(t('beginLoan.errorBeginningLoan'), error);
       onClose(false);
     } finally {
       setSubmitting(false);
@@ -70,7 +70,7 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={() => onClose(false)} maxWidth="sm" fullWidth>
-      <DialogTitle>Begin Loan</DialogTitle>
+      <DialogTitle>{t('beginLoan.title')}</DialogTitle>
       <Formik
         initialValues={{
           book: '',
@@ -86,7 +86,7 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="book"
-                label="Book"
+                label={t('beginLoan.book')}
                 select
                 fullWidth
                 margin="normal"
@@ -102,7 +102,7 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="user"
-                label="User"
+                label={t('beginLoan.user')}
                 select
                 fullWidth
                 margin="normal"
@@ -118,7 +118,7 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="days"
-                label="Number of Days"
+                label={t('beginLoan.days')}
                 type="number"
                 fullWidth
                 margin="normal"
@@ -128,10 +128,10 @@ const BeginLoanDialog: React.FC<BeginLoanDialogProps> = ({ open, onClose }) => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => onClose(false)} color="primary">
-                Cancel
+                {t('beginLoan.cancel')}
               </Button>
               <Button type="submit" color="primary" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Begin Loan'}
+                {isSubmitting ? t('beginLoan.submitting') : t('beginLoan.beginLoan')}
               </Button>
             </DialogActions>
           </Form>

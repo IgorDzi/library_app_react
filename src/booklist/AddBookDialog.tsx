@@ -3,23 +3,25 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } 
 import { Formik, Form, Field } from 'formik';
 import * as yup from 'yup';
 import { useApi } from '../ApiProvider';
+import { useTranslation } from 'react-i18next';
 
 interface AddBookDialogProps {
   open: boolean;
   onClose: (refresh: boolean) => void;
 }
 
-const validationSchema = yup.object({
-  isbn: yup.string().required('ISBN is required'),
-  title: yup.string().required('Title is required'),
-  author: yup.string().required('Author is required'),
-  publisher: yup.string().required('Publisher is required'),
-  publicationYear: yup.number().required('Publication Year is required').min(0),
-  availableCopies: yup.number().required('Number of copies is required').min(0),
-});
-
 const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
   const apiClient = useApi();
+  const { t } = useTranslation();
+
+  const validationSchema = yup.object({
+    isbn: yup.string().required(t('addBook.isbnRequired')),
+    title: yup.string().required(t('addBook.titleRequired')),
+    author: yup.string().required(t('addBook.authorRequired')),
+    publisher: yup.string().required(t('addBook.publisherRequired')),
+    publicationYear: yup.number().required(t('addBook.publicationYearRequired')).min(0),
+    availableCopies: yup.number().required(t('addBook.availableCopiesRequired')).min(0),
+  });
 
   const handleSubmit = async (values: any, { setSubmitting, resetForm }: any) => {
     try {
@@ -28,11 +30,11 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
         resetForm();
         onClose(true);
       } else {
-        alert('Failed to add book');
+        alert(t('addBook.addFailed'));
         onClose(false);
       }
     } catch (error) {
-      console.error('Error adding book:', error);
+      console.error(t('addBook.errorAddingBook'), error);
       onClose(false);
     } finally {
       setSubmitting(false);
@@ -41,7 +43,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
 
   return (
     <Dialog open={open} onClose={() => onClose(false)} maxWidth="sm" fullWidth>
-      <DialogTitle>Add Book</DialogTitle>
+      <DialogTitle>{t('addBook.title')}</DialogTitle>
       <Formik
         initialValues={{
           isbn: '',
@@ -60,7 +62,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="isbn"
-                label="ISBN"
+                label={t('addBook.isbn')}
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -69,7 +71,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="title"
-                label="Title"
+                label={t('addBook.book-title')}
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -78,7 +80,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="author"
-                label="Author"
+                label={t('addBook.author')}
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -87,7 +89,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="publisher"
-                label="Publisher"
+                label={t('addBook.publisher')}
                 fullWidth
                 margin="normal"
                 variant="outlined"
@@ -96,7 +98,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="publicationYear"
-                label="Publication Year"
+                label={t('addBook.publicationYear')}
                 type="number"
                 fullWidth
                 margin="normal"
@@ -106,7 +108,7 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
               <Field
                 as={TextField}
                 name="availableCopies"
-                label="Available Copies"
+                label={t('addBook.availableCopies')}
                 type="number"
                 fullWidth
                 margin="normal"
@@ -116,10 +118,10 @@ const AddBookDialog: React.FC<AddBookDialogProps> = ({ open, onClose }) => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => onClose(false)} color="primary">
-                Cancel
+                {t('addBook.cancel')}
               </Button>
               <Button type="submit" color="primary" disabled={isSubmitting}>
-                {isSubmitting ? 'Adding...' : 'Add Book'}
+                {isSubmitting ? t('addBook.adding') : t('addBook.addBook')}
               </Button>
             </DialogActions>
           </Form>

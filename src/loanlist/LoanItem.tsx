@@ -4,6 +4,7 @@ import { useApi } from '../ApiProvider';
 import { GetBookDto } from '../api/dto/books.dto';
 import { GetUserDto } from '../api/dto/user.dto';
 import { GetLoanDto } from '../api/dto/loans.dto';
+import { useTranslation } from 'react-i18next';
 
 interface LoanItemProps {
   loan: GetLoanDto;
@@ -17,6 +18,7 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchDetails = async () => {
@@ -30,17 +32,17 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
           setBook(bookResponse.data);
           setUser(userResponse.data);
         } else {
-          console.error('Failed to fetch book or user details');
+          console.error(t('loanItem.fetchDetailsFailed'));
         }
       } catch (error) {
-        console.error('Error fetching book or user details:', error);
+        console.error(t('loanItem.fetchError'), error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchDetails();
-  }, [apiClient, loan.book, loan.user]);
+  }, [apiClient, loan.book, loan.user, t]);
 
   const handleEndLoan = async () => {
     try {
@@ -48,10 +50,10 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
       if (response.success) {
         onLoanEnded();
       } else {
-        alert('Failed to end loan');
+        alert(t('loanItem.endFailed'));
       }
     } catch (error) {
-      console.error('Error ending loan:', error);
+      console.error(t('loanItem.errorEndingLoan'), error);
     } finally {
       setConfirmOpen(false);
     }
@@ -70,7 +72,7 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
   }
 
   if (!book || !user) {
-    return <Typography color="error">Error loading loan details</Typography>;
+    return <Typography color="error">{t('loanItem.errorLoadingDetails')}</Typography>;
   }
 
   const calculateDueDate = (loanDate: string, days: number): Date => {
@@ -87,26 +89,26 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
   const dueDate = loan.returnDate ? new Date(loan.returnDate) : calculateDueDate(loan.loanDate, loan.days);
   const daysRemaining = calculateDaysRemaining(dueDate);
   const isReturned = loan.returnDate !== null;
-  const loanStatus = isReturned ? 'Returned' : 'Not Returned';
+  const loanStatus = isReturned ? t('loanItem.returned') : t('loanItem.notReturned');
   const statusColor = isReturned ? 'success' : 'error';
 
   return (
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
         <Typography variant="h5" component="h2">
-          Loan ID: {loan.id}
+          {t('loanItem.loanId')}: {loan.id}
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          Book: {book.title} by {book.author}
+          {t('loanItem.book')}: {book.title} {t('loanItem.by')} {book.author}
         </Typography>
         <Typography variant="subtitle2">
-          Borrower: {user.fullName} (ID: {user.id})
+          {t('loanItem.borrower')}: {user.fullName} (ID: {user.id})
         </Typography>
         <Typography color="text.secondary">
-          Loan Date: {loan.loanDate}
+          {t('loanItem.loanDate')}: {loan.loanDate}
         </Typography>
         <Typography color="text.secondary">
-          Return Date: {dueDate.toISOString().split('T')[0]}
+          {t('loanItem.returnDate')}: {dueDate.toISOString().split('T')[0]}
         </Typography>
         <Chip
           label={loanStatus}
@@ -115,7 +117,7 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
         />
         {!isReturned && (
           <Chip
-            label={`Days Remaining: ${daysRemaining}`}
+            label={`${t('loanItem.daysRemaining')}: ${daysRemaining}`}
             color={daysRemaining < 0 ? 'error' : 'primary'}
             sx={{ marginTop: 1 }}
           />
@@ -128,22 +130,22 @@ const LoanItem: React.FC<LoanItemProps> = ({ loan, role, onLoanEnded }) => {
               onClick={openConfirmDialog}
               sx={{ marginTop: 2 }}
             >
-              End Loan
+              {t('loanItem.endLoan')}
             </Button>
             <Dialog
               open={confirmOpen}
               onClose={closeConfirmDialog}
             >
-              <DialogTitle>Confirm End Loan</DialogTitle>
+              <DialogTitle>{t('loanItem.confirmEndLoan')}</DialogTitle>
               <DialogContent>
-                <Typography>Are you sure you want to end this loan?</Typography>
+                <Typography>{t('loanItem.confirmEndLoanText')}</Typography>
               </DialogContent>
               <DialogActions>
                 <Button onClick={closeConfirmDialog} color="primary">
-                  Cancel
+                  {t('loanItem.cancel')}
                 </Button>
                 <Button onClick={handleEndLoan} color="secondary">
-                  End Loan
+                  {t('loanItem.endLoan')}
                 </Button>
               </DialogActions>
             </Dialog>

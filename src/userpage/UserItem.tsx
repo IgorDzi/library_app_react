@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
 import { useApi } from '../ApiProvider';
 import { GetUserDto, UpdatePasswordDto } from '../api/dto/user.dto';
+import { useTranslation } from 'react-i18next';
 
 interface UserItemProps {
   user: GetUserDto;
@@ -16,6 +17,7 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
   const [username, setUsername] = useState<string>('');
   const [userRole, setUserRole] = useState<string>('');
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchUsernameAndRole = async () => {
@@ -26,15 +28,15 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
           setUsername(usernameResponse.data || '');
           setUserRole(userRoleResponse.data || '');
         } else {
-          console.error('Failed to fetch username or user role');
+          console.error(t('userItem.fetchFailed'));
         }
       } catch (error) {
-        console.error('Error fetching username or user role:', error);
+        console.error(t('userItem.fetchError'), error);
       }
     };
 
     fetchUsernameAndRole();
-  }, [apiClient, user.id]);
+  }, [apiClient, user.id, t]);
 
   const handleUpdatePassword = async () => {
     setLoading(true);
@@ -43,12 +45,12 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
       const response = await apiClient.updatePassword(data);
       if (response.success) {
         onUserUpdated();
-        alert('Password updated successfully');
+        alert(t('userItem.updateSuccess'));
       } else {
-        alert('Failed to update password');
+        alert(t('userItem.updateFailed'));
       }
     } catch (error) {
-      console.error('Error updating password:', error);
+      console.error(t('userItem.updateError'), error);
     } finally {
       setLoading(false);
       setConfirmOpen(false);
@@ -67,19 +69,19 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
         <Typography variant="h5" component="h2">
-          User ID: {user.id}
+          {t('userItem.userId')}: {user.id}
         </Typography>
         <Typography variant="subtitle1" gutterBottom>
-          Full Name: {user.fullName}
+          {t('userItem.fullName')}: {user.fullName}
         </Typography>
         <Typography variant="subtitle2">
-          Username: {username}
+          {t('userItem.username')}: {username}
         </Typography>
         <Typography color="text.secondary">
-          Email: {user.email}
+          {t('userItem.email')}: {user.email}
         </Typography>
         <Typography color="text.secondary">
-          Role: {userRole}
+          {t('userItem.role')}: {userRole}
         </Typography>
         {role === 'ROLE_ADMIN' && (
           <>
@@ -89,29 +91,29 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
               onClick={openConfirmDialog}
               sx={{ marginTop: 2, backgroundColor: 'purple' }}
             >
-              Update Password
+              {t('userItem.updatePassword')}
             </Button>
             <Dialog
               open={confirmOpen}
               onClose={closeConfirmDialog}
             >
-              <DialogTitle>Update Password</DialogTitle>
+              <DialogTitle>{t('userItem.updatePasswordTitle')}</DialogTitle>
               <DialogContent>
                 <TextField
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="New Password"
+                  placeholder={t('userItem.newPasswordPlaceholder')}
                   fullWidth
                   margin="normal"
                 />
               </DialogContent>
               <DialogActions>
                 <Button onClick={closeConfirmDialog} color="primary">
-                  Cancel
+                  {t('userItem.cancel')}
                 </Button>
                 <Button onClick={handleUpdatePassword} color="secondary">
-                  Update Password
+                  {t('userItem.updatePassword')}
                 </Button>
               </DialogActions>
             </Dialog>

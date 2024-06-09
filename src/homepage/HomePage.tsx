@@ -5,10 +5,12 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import PeopleIcon from '@mui/icons-material/People';
 import { useApi } from '../ApiProvider';
+import { useTranslation } from 'react-i18next';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const apiClient = useApi();
+  const { t } = useTranslation();
   const [role, setRole] = useState<string | null>(null);
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const HomePage: React.FC = () => {
   return (
     <Container maxWidth="sm">
       <Typography variant="h4" gutterBottom component="div" align="center" style={{ margin: '20px 0' }}>
-        Welcome to the Library
+        {t('homePage.welcome')}
       </Typography>
       <Grid container spacing={2} justifyContent="center">
         <Grid item>
@@ -53,7 +55,7 @@ const HomePage: React.FC = () => {
               padding: '10px 20px',
             }}
           >
-            View Books
+            {t('homePage.viewBooks')}
           </Button>
         </Grid>
         <Grid item>
@@ -68,7 +70,7 @@ const HomePage: React.FC = () => {
               padding: '10px 20px',
             }}
           >
-            View Loans
+            {t('homePage.viewLoans')}
           </Button>
         </Grid>
         {role === 'ROLE_ADMIN' && (
@@ -84,7 +86,7 @@ const HomePage: React.FC = () => {
                 padding: '10px 20px',
               }}
             >
-              Manage Users
+              {t('homePage.manageUsers')}
             </Button>
           </Grid>
         )}

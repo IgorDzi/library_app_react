@@ -1,14 +1,14 @@
-
 import React from 'react';
 import { Card, CardContent, Typography, Chip } from '@mui/material';
 import { GetBookDto } from '../api/dto/books.dto';
-
+import { useTranslation } from 'react-i18next';
 
 interface BookItemProps {
   book: GetBookDto;
 }
 
 const BookItem: React.FC<BookItemProps> = ({ book }) => {
+  const { t } = useTranslation();
 
   return (
     <Card sx={{ marginBottom: 2 }}>
@@ -20,14 +20,14 @@ const BookItem: React.FC<BookItemProps> = ({ book }) => {
           {book.author}
         </Typography>
         <Typography variant="body2">
-          <strong>Publisher:</strong> {book.publisher}
+          <strong>{t('bookItem.publisher')}:</strong> {book.publisher}
           <br />
-          <strong>Year:</strong> {book.publicationYear}
+          <strong>{t('bookItem.year')}:</strong> {book.publicationYear}
           <br />
-          <strong>ISBN:</strong> {book.isbn}
+          <strong>{t('bookItem.isbn')}:</strong> {book.isbn}
         </Typography>
         <Chip
-          label={book.available ? 'Available' : 'Not Available'}
+          label={book.available ? t('bookItem.available') : t('bookItem.notAvailable')}
           color={book.available ? 'success' : 'error'}
           sx={{ marginTop: 1 }}
         />
@@ -36,8 +36,4 @@ const BookItem: React.FC<BookItemProps> = ({ book }) => {
   );
 };
 
-
 export default BookItem;
-
-
-

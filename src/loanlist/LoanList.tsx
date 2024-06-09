@@ -4,6 +4,7 @@ import LoanItem from './LoanItem';
 import { useApi } from '../ApiProvider';
 import { GetLoanDto } from '../api/dto/loans.dto';
 import BeginLoanDialog from './BeginLoanDialog';
+import { useTranslation } from 'react-i18next';
 
 const LoanList: React.FC = () => {
   const [loans, setLoans] = useState<GetLoanDto[]>([]);
@@ -11,6 +12,7 @@ const LoanList: React.FC = () => {
   const [role, setRole] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const fetchLoans = async () => {
     try {
@@ -18,10 +20,10 @@ const LoanList: React.FC = () => {
       if (response.success) {
         setLoans(response.data || []);
       } else {
-        console.error('Failed to fetch loans');
+        console.error(t('loanList.fetchLoansFailed'));
       }
     } catch (error) {
-      console.error('Error fetching loans:', error);
+      console.error(t('loanList.errorFetchingLoans'), error);
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,14 @@ const LoanList: React.FC = () => {
         if (response.success) {
           setRole(response.data);
         } else {
-          console.error('Failed to fetch user role');
+          console.error(t('loanList.fetchRoleFailed'));
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error(t('loanList.errorFetchingRole'), error);
       }
     };
     fetchRole();
-  }, [apiClient]);
+  }, [apiClient, t]);
 
   const handleAddLoanClick = () => {
     setOpen(true);
@@ -69,7 +71,7 @@ const LoanList: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" component="h2" sx={{ marginBottom: 4 }}>
-        Loan List
+        {t('loanList.title')}
       </Typography>
       {role === 'ROLE_ADMIN' && (
         <Button
@@ -78,7 +80,7 @@ const LoanList: React.FC = () => {
           onClick={handleAddLoanClick}
           sx={{ marginBottom: 4 }}
         >
-          Add Loan
+          {t('loanList.addLoan')}
         </Button>
       )}
       {loans.length > 0 ? (
@@ -86,7 +88,7 @@ const LoanList: React.FC = () => {
           <LoanItem key={loan.id} loan={loan} role={role} onLoanEnded={handleLoanEnded} />
         ))
       ) : (
-        <Typography>No loans available</Typography>
+        <Typography>{t('loanList.noLoans')}</Typography>
       )}
       <BeginLoanDialog open={open} onClose={handleClose} />
     </Container>

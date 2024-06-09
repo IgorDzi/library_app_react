@@ -4,6 +4,7 @@ import BookItem from './BookItem';
 import { GetBookDto } from '../api/dto/books.dto';
 import { useApi } from '../ApiProvider';
 import AddBookDialog from './AddBookDialog';
+import { useTranslation } from 'react-i18next';
 
 const BookList: React.FC = () => {
   const [books, setBooks] = useState<GetBookDto[]>([]);
@@ -11,6 +12,7 @@ const BookList: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [role, setRole] = useState<string | null>(null);
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
@@ -19,14 +21,14 @@ const BookList: React.FC = () => {
       if (response.success) {
         setBooks(response.data || []);
       } else {
-        console.error('Failed to fetch books');
+        console.error(t('bookList.fetchFailed'));
       }
     } catch (error) {
-      console.error('Error fetching books:', error);
+      console.error(t('bookList.errorFetching'), error);
     } finally {
       setLoading(false);
     }
-  }, [apiClient]);
+  }, [apiClient, t]);
 
   useEffect(() => {
     fetchBooks();
@@ -39,14 +41,14 @@ const BookList: React.FC = () => {
         if (response.success) {
           setRole(response.data);
         } else {
-          console.error('Failed to fetch user role');
+          console.error(t('bookList.fetchRoleFailed'));
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error(t('bookList.errorFetchingRole'), error);
       }
     };
     fetchRole();
-  }, [apiClient]);
+  }, [apiClient, t]);
 
   const handleAddBookClick = () => {
     setOpen(true);
@@ -66,7 +68,7 @@ const BookList: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" component="h2" sx={{ marginBottom: 4 }}>
-        Book List
+        {t('bookList.title')}
       </Typography>
       {role === 'ROLE_ADMIN' && (
         <Button
@@ -75,13 +77,13 @@ const BookList: React.FC = () => {
           onClick={handleAddBookClick}
           sx={{ marginBottom: 4 }}
         >
-          Add Book
+          {t('bookList.addBook')}
         </Button>
       )}
       {books.length > 0 ? (
         books.map((book) => <BookItem key={book.id} book={book} />)
       ) : (
-        <Typography>No books available</Typography>
+        <Typography>{t('bookList.noBooks')}</Typography>
       )}
       <AddBookDialog open={open} onClose={handleClose} />
     </Container>

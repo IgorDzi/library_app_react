@@ -4,6 +4,7 @@ import UserItem from './UserItem';
 import { useApi } from '../ApiProvider';
 import { GetUserDto } from '../api/dto/user.dto';
 import AddUserDialog from './AddUserDialog';
+import { useTranslation } from 'react-i18next';
 
 const UserManagementPage: React.FC = () => {
   const [users, setUsers] = useState<GetUserDto[]>([]);
@@ -11,6 +12,7 @@ const UserManagementPage: React.FC = () => {
   const [role, setRole] = useState<string | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const apiClient = useApi();
+  const { t } = useTranslation();
 
   const fetchUsers = async () => {
     try {
@@ -18,10 +20,10 @@ const UserManagementPage: React.FC = () => {
       if (response.success) {
         setUsers(response.data || []);
       } else {
-        console.error('Failed to fetch users');
+        console.error(t('userManagement.fetchFailed'));
       }
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error(t('userManagement.fetchError'), error);
     } finally {
       setLoading(false);
     }
@@ -38,14 +40,14 @@ const UserManagementPage: React.FC = () => {
         if (response.success) {
           setRole(response.data);
         } else {
-          console.error('Failed to fetch user role');
+          console.error(t('userManagement.fetchRoleFailed'));
         }
       } catch (error) {
-        console.error('Error fetching user role:', error);
+        console.error(t('userManagement.fetchRoleError'), error);
       }
     };
     fetchRole();
-  }, [apiClient]);
+  }, [apiClient, t]);
 
   const handleAddUserClick = () => {
     setOpen(true);
@@ -69,7 +71,7 @@ const UserManagementPage: React.FC = () => {
   return (
     <Container>
       <Typography variant="h4" component="h2" sx={{ marginBottom: 4 }}>
-        Users
+        {t('userManagement.title')}
       </Typography>
       {role === 'ROLE_ADMIN' && (
         <Button
@@ -78,7 +80,7 @@ const UserManagementPage: React.FC = () => {
           onClick={handleAddUserClick}
           sx={{ marginBottom: 4 }}
         >
-          Add User
+          {t('userManagement.addUser')}
         </Button>
       )}
       {users.length > 0 ? (
@@ -86,7 +88,7 @@ const UserManagementPage: React.FC = () => {
           <UserItem key={user.id} user={user} role={role} onUserUpdated={handleUserUpdated} />
         ))
       ) : (
-        <Typography>No users available</Typography>
+        <Typography>{t('userManagement.noUsers')}</Typography>
       )}
       <AddUserDialog open={open} onClose={handleClose} />
     </Container>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField } from '@mui/material';
+import { Card, CardContent, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Grid } from '@mui/material';
 import { useApi } from '../ApiProvider';
 import { GetUserDto, UpdatePasswordDto } from '../api/dto/user.dto';
 import { useTranslation } from 'react-i18next';
@@ -8,11 +8,13 @@ interface UserItemProps {
   user: GetUserDto;
   role: string | null;
   onUserUpdated: () => void;
+  onDelete: (id: number) => void;
 }
 
-const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
+const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated, onDelete }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
   const [newPassword, setNewPassword] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [userRole, setUserRole] = useState<string>('');
@@ -65,6 +67,21 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
     setConfirmOpen(false);
   };
 
+  const openDeleteConfirmDialog = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const closeDeleteConfirmDialog = () => {
+    setDeleteConfirmOpen(false);
+  };
+
+  const handleDeleteUser = () => {
+    if (user.id !== undefined) {
+      onDelete(user.id);
+    }
+    closeDeleteConfirmDialog();
+  };
+
   return (
     <Card sx={{ marginBottom: 2 }}>
       <CardContent>
@@ -85,14 +102,29 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
         </Typography>
         {role === 'ROLE_ADMIN' && (
           <>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={openConfirmDialog}
-              sx={{ marginTop: 2, backgroundColor: 'purple' }}
-            >
-              {t('userItem.updatePassword')}
-            </Button>
+            <Grid container spacing={2} sx={{ marginTop: 2 }}>
+              <Grid item xs={12} sm={6}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={openConfirmDialog}
+                  fullWidth
+                  sx={{ backgroundColor: 'purple' }}
+                >
+                  {t('userItem.updatePassword')}
+                </Button>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={openDeleteConfirmDialog}
+                  fullWidth
+                >
+                  {t('userItem.deleteUser')}
+                </Button>
+              </Grid>
+            </Grid>
             <Dialog
               open={confirmOpen}
               onClose={closeConfirmDialog}
@@ -114,6 +146,23 @@ const UserItem: React.FC<UserItemProps> = ({ user, role, onUserUpdated }) => {
                 </Button>
                 <Button onClick={handleUpdatePassword} color="secondary">
                   {t('userItem.updatePassword')}
+                </Button>
+              </DialogActions>
+            </Dialog>
+            <Dialog
+              open={deleteConfirmOpen}
+              onClose={closeDeleteConfirmDialog}
+            >
+              <DialogTitle>{t('userItem.deleteUserTitle')}</DialogTitle>
+              <DialogContent>
+                <Typography>{t('userItem.deleteUserConfirmation')}</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={closeDeleteConfirmDialog} color="primary">
+                  {t('userItem.cancel')}
+                </Button>
+                <Button onClick={handleDeleteUser} color="secondary">
+                  {t('userItem.delete')}
                 </Button>
               </DialogActions>
             </Dialog>

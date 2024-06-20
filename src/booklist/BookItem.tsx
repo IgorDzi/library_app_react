@@ -1,14 +1,32 @@
-import React from 'react';
-import { Card, CardContent, Typography, Chip } from '@mui/material';
+import React, { useState } from 'react';
+import { Card, CardContent, Typography, Chip, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import { GetBookDto } from '../api/dto/books.dto';
 import { useTranslation } from 'react-i18next';
 
 interface BookItemProps {
   book: GetBookDto;
+  role: string | null;
+  onDelete: (id: number) => void;
 }
 
-const BookItem: React.FC<BookItemProps> = ({ book }) => {
+const BookItem: React.FC<BookItemProps> = ({ book, role, onDelete }) => {
   const { t } = useTranslation();
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState<boolean>(false);
+
+  const handleDelete = () => {
+    if (book.id !== undefined) {
+      onDelete(book.id);
+    }
+    closeDeleteConfirmDialog();
+  };
+
+  const openDeleteConfirmDialog = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const closeDeleteConfirmDialog = () => {
+    setDeleteConfirmOpen(false);
+  };
 
   return (
     <Card sx={{ marginBottom: 2 }}>
@@ -31,6 +49,35 @@ const BookItem: React.FC<BookItemProps> = ({ book }) => {
           color={book.available ? 'success' : 'error'}
           sx={{ marginTop: 1 }}
         />
+        {role === 'ROLE_ADMIN' && (
+          <>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={openDeleteConfirmDialog}
+              sx={{ marginTop: 1, marginLeft: 1 }}
+            >
+              {t('bookItem.delete')}
+            </Button>
+            <Dialog
+              open={deleteConfirmOpen}
+              onClose={closeDeleteConfirmDialog}
+            >
+              <DialogTitle>{t('bookItem.deleteBookTitle')}</DialogTitle>
+              <DialogContent>
+                <Typography>{t('bookItem.deleteBookConfirmation')}</Typography>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={closeDeleteConfirmDialog} color="primary">
+                  {t('bookItem.cancel')}
+                </Button>
+                <Button onClick={handleDelete} color="secondary">
+                  {t('bookItem.delete')}
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </>
+        )}
       </CardContent>
     </Card>
   );

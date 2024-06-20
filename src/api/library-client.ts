@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios';
 import { LoginDto, LoginResponseDto } from './dto/login.dto';
-import { CreateBookDto, CreateBookResponseDto, GetAllBooksDto, GetBookDto } from './dto/books.dto';
+import { CreateBookDto, CreateBookResponseDto, GetAllBooksDto, GetBookDto, SearchForBookDto } from './dto/books.dto';
 import { BeginLoanDto, BeginLoanResponseDto, GetAllLoansDto, GetLoanDto } from './dto/loans.dto';
 import { GetUserDto, RegisterDto, UpdatePasswordDto, UpdatePasswordResponseDto } from './dto/user.dto';
 
@@ -194,6 +194,41 @@ export class LibraryClient {
       };
     }
   }
+  public async deleteUser(id: number): Promise<ClientResponse<null>> {
+    try {
+      const response: AxiosResponse<null> = await this.client.delete(`/users/${id}`);
+      return {
+        success: true,
+        data: null,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: axiosError.response?.status || 0,
+      };
+    }
+  }
+
+  public async deleteBook(id: number): Promise<ClientResponse<null>> {
+    try {
+      const response: AxiosResponse<null> = await this.client.delete(`/books/${id}`);
+      return {
+        success: true,
+        data: null,
+        statusCode: response.status,
+      };
+    } catch (error) {
+      const axiosError = error as AxiosError<Error>;
+      return {
+        success: false,
+        data: null,
+        statusCode: axiosError.response?.status || 0,
+      };
+    }
+  }
 
   public async getUserRoleById(id: number): Promise<ClientResponse<string | null>> {
     try {
@@ -212,7 +247,15 @@ export class LibraryClient {
       };
     }
   }
-
+  public async searchBooks(search: SearchForBookDto): Promise<{ success: boolean; data: GetBookDto[] }> {
+    try {
+      const response = await this.client.post<GetBookDto[]>('/books/search', search);
+      return { success: true, data: response.data };
+    } catch (error) {
+      console.error('Error searching books', error);
+      return { success: false, data: [] };
+    }
+  }
 
   public async beginLoan(data: BeginLoanDto): Promise<ClientResponse<BeginLoanResponseDto | null>> {
     try {

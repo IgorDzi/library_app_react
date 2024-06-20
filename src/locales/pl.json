@@ -42,10 +42,13 @@
   },
   "bookItem": {
     "publisher": "Wydawca",
+    "delete": "Usuń",
     "year": "Rok",
     "isbn": "ISBN",
     "available": "Dostępne",
-    "notAvailable": "Niedostępne"
+    "notAvailable": "Niedostępne",
+    "deleteBookTitle": "Usuń książkę",
+    "deleteBookConfirmation": "Czy na pewno chcesz usunąć tę książkę?"
   },
   "bookList": {
     "title": "Lista książek",
@@ -54,7 +57,17 @@
     "errorFetching": "Błąd podczas pobierania książek",
     "fetchRoleFailed": "Nie udało się pobrać roli użytkownika",
     "errorFetchingRole": "Błąd podczas pobierania roli użytkownika",
-    "noBooks": "Brak dostępnych książek"
+    "noBooks": "Brak dostępnych książek",
+    "search": "Szukaj",
+    "clearSearch": "Wyczyść wyszukiwanie",
+    "bookTitle": "Książki",
+    "isbn": "ISBN",
+    "searchBookTitle": "Tytuł",
+    "author": "Autor",
+    "publisher": "Wydawca",
+    "isAvailable": "Dostępne",
+    "searchFailed": "Nie udało się wyszukać książek",
+    "errorSearching": "Błąd podczas wyszukiwania książek"
   },
   "beginLoan": {
     "title": "Rozpocznij wypożyczenie",
@@ -118,24 +131,29 @@
     "addUser": "Dodaj użytkownika"
   },
   "userItem": {
-    "userId": "ID użytkownika",
+    "userId": "ID Użytkownika",
     "fullName": "Imię i nazwisko",
     "username": "Nazwa użytkownika",
     "email": "Email",
     "role": "Rola",
-    "updatePassword": "Zaktualizuj hasło",
-    "updatePasswordTitle": "Zaktualizuj hasło",
+    "updatePassword": "Zmień hasło",
+    "updatePasswordTitle": "Zmień hasło",
     "newPasswordPlaceholder": "Nowe hasło",
-    "updateSuccess": "Hasło zostało zaktualizowane",
-    "updateFailed": "Nie udało się zaktualizować hasła",
-    "updateError": "Błąd podczas aktualizacji hasła",
-    "fetchFailed": "Nie udało się pobrać nazwy użytkownika lub roli użytkownika",
-    "fetchError": "Błąd podczas pobierania nazwy użytkownika lub roli użytkownika",
-    "cancel": "Anuluj"
+    "updateSuccess": "Hasło zostało pomyślnie zmienione",
+    "updateFailed": "Nie udało się zmienić hasła",
+    "updateError": "Błąd podczas zmiany hasła",
+    "fetchFailed": "Nie udało się pobrać nazwy użytkownika lub roli",
+    "fetchError": "Błąd podczas pobierania nazwy użytkownika lub roli",
+    "cancel": "Anuluj",
+    "deleteUser": "Usuń użytkownika",
+    "deleteUserTitle": "Usuń użytkownika",
+    "deleteUserConfirmation": "Czy na pewno chcesz usunąć tego użytkownika?",
+    "delete": "Usuń"
   },
   "userManagement": {
     "title": "Zarządzanie użytkownikami",
     "addUser": "Dodaj użytkownika",
+    "deleteUser":"Delete User",
     "fetchFailed": "Nie udało się pobrać użytkowników",
     "fetchError": "Błąd podczas pobierania użytkowników",
     "fetchRoleFailed": "Nie udało się pobrać roli użytkownika",
@@ -152,4 +170,4 @@
     "index": "Indeks",
     "email": "E-mail"
   }
-}
+},

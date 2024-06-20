@@ -42,10 +42,13 @@
   },
   "bookItem": {
     "publisher": "Publisher",
+    "delete": "Delete",
     "year": "Year",
     "isbn": "ISBN",
     "available": "Available",
-    "notAvailable": "Not Available"
+    "notAvailable": "Not Available",
+    "deleteBookTitle": "Delete Book",
+    "deleteBookConfirmation": "Are you sure you want to delete this book?"
   },
   "bookList": {
     "title": "Book List",
@@ -54,8 +57,19 @@
     "errorFetching": "Error fetching books",
     "fetchRoleFailed": "Failed to fetch user role",
     "errorFetchingRole": "Error fetching user role",
-    "noBooks": "No books available"
-  },
+    "noBooks": "No books available",
+    "search": "Search",
+    "clearSearch": "Clear Search",
+    "bookTitle": "Books",
+    "isbn": "ISBN",
+    "searchBookTitle": "Title",
+    "author": "Author",
+    "publisher": "Publisher",
+    "isAvailable": "Available",
+    "searchFailed": "Failed to search books",
+    "errorSearching": "Error searching books"
+  }
+,
   "beginLoan": {
     "title": "Begin Loan",
     "book": "Book",
@@ -131,7 +145,11 @@
     "updateError": "Error updating password",
     "fetchFailed": "Failed to fetch username or user role",
     "fetchError": "Error fetching username or user role",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "deleteUser": "Delete User",
+    "deleteUserTitle": "Delete User",
+    "deleteUserConfirmation": "Are you sure you want to delete this user?",
+    "delete": "Delete"
   },
   "userManagement": {
     "title": "User Management",

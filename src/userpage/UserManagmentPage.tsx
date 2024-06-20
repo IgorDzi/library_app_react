@@ -64,6 +64,22 @@ const UserManagementPage: React.FC = () => {
     fetchUsers();
   };
 
+  const handleDeleteUser = async (id: number) => {
+    setLoading(true);
+    try {
+      const response = await apiClient.deleteUser(id);
+      if (response.success) {
+        setUsers(users.filter(user => user.id !== id));
+      } else {
+        console.error(t('userManagement.deleteFailed'));
+      }
+    } catch (error) {
+      console.error(t('userManagement.errorDeleting'), error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loading) {
     return <CircularProgress />;
   }
@@ -85,7 +101,7 @@ const UserManagementPage: React.FC = () => {
       )}
       {users.length > 0 ? (
         users.map((user) => (
-          <UserItem key={user.id} user={user} role={role} onUserUpdated={handleUserUpdated} />
+          <UserItem key={user.id} user={user} role={role} onUserUpdated={handleUserUpdated} onDelete={handleDeleteUser} />
         ))
       ) : (
         <Typography>{t('userManagement.noUsers')}</Typography>

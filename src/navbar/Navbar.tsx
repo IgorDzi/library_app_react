@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
       </div>
       <div className="language-toggle-container">
         <button className="language-toggle-btn" onClick={toggleLanguage}>
-          <FontAwesomeIcon icon={faGlobe} /> {i18n.language === 'en' ? 'EN' : 'PL'}
+          <FontAwesomeIcon icon={faGlobe} /> {i18n.language === 'en' ? 'PL' : 'EN'}
         </button>
       </div>
     </nav>

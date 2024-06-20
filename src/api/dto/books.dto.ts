@@ -26,4 +26,14 @@ export interface CreateBookResponseDto {
   availableCopies: number;
 }
 
+export interface SearchForBookDto {
+  isbn?: string;
+  title?: string;
+  author?: string;
+  publisher?: string;
+  publicationYear?: number;
+  isAvailable?: boolean;
+}
+
+
 export type GetAllBooksDto = GetBookDto[];
